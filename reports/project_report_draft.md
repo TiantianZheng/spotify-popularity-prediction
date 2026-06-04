@@ -38,9 +38,13 @@ metadata rather than full text analysis.
 The notebook's exploratory analysis focuses on:
 
 - Distribution of track popularity.
+- Duplicate `track_id` and data granularity checks.
 - Correlations between audio features and popularity.
-- Average popularity by genre.
-- Relationships between danceability, acousticness, loudness, and popularity.
+- Average popularity by genre, including both high- and low-popularity genres.
+- Audio feature distributions.
+- Correlation heatmap among audio features.
+- Explicit versus non-explicit track popularity.
+- Low, medium, and high popularity bucket profiles.
 
 ## 3. Predictive Task
 

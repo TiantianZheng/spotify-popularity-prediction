@@ -92,6 +92,20 @@ The strongest predictors under permutation importance are:
 The major takeaway is that Spotify popularity cannot be explained by acoustic
 features alone. Genre and lightweight metadata capture important market context.
 
+## EDA Included in the Notebook
+
+The notebook includes:
+
+- Dataset shape, column types, and missing-value check
+- Duplicate `track_id` and data granularity check
+- Popularity distribution
+- Audio feature correlations with popularity
+- Top and bottom genre-level popularity analysis
+- Audio feature distributions
+- Correlation heatmap
+- Explicit vs non-explicit popularity comparison
+- Low / medium / high popularity bucket profiles
+
 ## How to Run
 
 Open `spotify_popularity_prediction.ipynb` in Cursor or Jupyter and run the
