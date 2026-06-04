@@ -37,14 +37,20 @@ metadata rather than full text analysis.
 
 The notebook's exploratory analysis focuses on:
 
-- Distribution of track popularity.
-- Duplicate `track_id` and data granularity checks.
-- Correlations between audio features and popularity.
-- Average popularity by genre, including both high- and low-popularity genres.
+- Data quality, missing-value, and duplicate `track_id` checks.
+- Distribution of the popularity target variable.
+- Genre-level popularity patterns, including both high- and low-popularity genres.
 - Audio feature distributions.
+- Audio feature correlations with popularity.
 - Correlation heatmap among audio features.
 - Explicit versus non-explicit track popularity.
 - Low, medium, and high popularity bucket profiles.
+
+The EDA motivates the model design in three ways. First, popularity is a broad
+0-100 score, so regression is appropriate. Second, genre-level differences are
+large, so the project compares audio-only features with audio-plus-metadata
+features. Third, individual audio correlations are limited, so the model must
+combine multiple weak signals rather than rely on a single musical property.
 
 ## 3. Predictive Task
 

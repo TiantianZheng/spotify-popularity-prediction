@@ -2,3 +2,5 @@
 .mplconfig/
 __pycache__/
 *.pyc
+figures/
+outputs/

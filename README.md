@@ -96,15 +96,15 @@ features alone. Genre and lightweight metadata capture important market context.
 
 The notebook includes:
 
-- Dataset shape, column types, and missing-value check
-- Duplicate `track_id` and data granularity check
-- Popularity distribution
-- Audio feature correlations with popularity
-- Top and bottom genre-level popularity analysis
+- Data quality, missing-value, and duplicate `track_id` checks
+- Popularity target distribution
+- Genre-level popularity patterns, including top and bottom genres
 - Audio feature distributions
-- Correlation heatmap
+- Audio feature correlations with popularity
+- Correlation heatmap among audio features
 - Explicit vs non-explicit popularity comparison
 - Low / medium / high popularity bucket profiles
+- EDA summary that motivates the model and ablation design
 
 ## How to Run
 
