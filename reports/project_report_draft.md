@@ -67,11 +67,19 @@ The baseline model predicts the mean popularity from the training set. This
 baseline is appropriate because it shows whether machine learning models learn
 structure beyond the marginal popularity distribution.
 
+Because the dataset contains repeated `track_id` values, the experiment uses a
+group-based train/test split by `track_id`. This prevents the same track from
+appearing in both training and testing sets. Without this precaution, the test
+set could contain near-duplicates of training examples and produce overly
+optimistic performance.
+
 ## 4. Models
 
 The notebook compares four models:
 
 - **Mean baseline**: predicts the average training-set popularity.
+- **Genre mean baseline**: predicts the average training-set popularity for
+  each `track_genre`.
 - **Ridge Regression**: a regularized linear model.
 - **Random Forest Regressor**: a nonlinear bagged tree ensemble.
 - **HistGradientBoosting Regressor**: a scalable gradient boosting model for
@@ -110,14 +118,18 @@ matter most.
 
 | Model | MAE | RMSE | R2 |
 |---|---:|---:|---:|
-| HistGradientBoosting | 12.914 | 17.612 | 0.382 |
-| Ridge Regression | 14.169 | 19.325 | 0.256 |
-| Random Forest | 16.451 | 20.556 | 0.158 |
-| Mean baseline | 18.984 | 22.406 | ~0.000 |
+| HistGradientBoosting | 13.030 | 17.782 | 0.369 |
+| Ridge Regression | 14.167 | 19.270 | 0.259 |
+| Genre mean baseline | 14.234 | 19.356 | 0.253 |
+| Random Forest | 16.495 | 20.589 | 0.154 |
+| Global mean baseline | 18.965 | 22.389 | ~0.000 |
 
-HistGradientBoosting performs best, with an RMSE of 17.612 and an R2 of 0.382.
-Compared with the mean baseline RMSE of 22.406, the best model reduces error by
-about 21.5%.
+HistGradientBoosting performs best, with an RMSE of 17.782 and an R2 of 0.369.
+Compared with the global mean baseline RMSE of 22.389, the best model reduces
+error by about 20.6%. The genre mean baseline is much stronger than the global
+mean baseline, confirming that genre carries substantial popularity signal.
+However, HistGradientBoosting still outperforms the genre baseline, suggesting
+that audio features and metadata add useful information beyond genre averages.
 
 The R2 score shows that popularity is only partially predictable from the
 available features. This is expected because song popularity also depends on
@@ -128,17 +140,27 @@ artist fame, social media trends, and listener network effects.
 
 | Feature Set | MAE | RMSE | R2 |
 |---|---:|---:|---:|
-| Audio + metadata + simple engineered features | 13.041 | 17.735 | 0.374 |
-| Audio + metadata | 13.150 | 17.886 | 0.363 |
-| Audio features only | 16.150 | 19.896 | 0.211 |
+| Audio + metadata + simple engineered features | 13.134 | 17.867 | 0.363 |
+| Audio + metadata | 13.266 | 18.072 | 0.348 |
+| Audio features only | 16.633 | 20.576 | 0.155 |
 
 The ablation study shows that audio features alone contain predictive signal,
 but metadata improves performance substantially. In particular, adding
-`track_genre`, `duration_ms`, and `explicit` increases R2 from about 0.211 to
-about 0.363. Simple engineered features such as track name length, artist
+`track_genre`, `duration_ms`, and `explicit` increases R2 from about 0.155 to
+about 0.348. Simple engineered features such as track name length, artist
 count, and duration in minutes add a small additional improvement.
 
-## 8. Feature Importance and Interpretation
+## 8. Error Analysis
+
+The best model performs unevenly across popularity buckets. For low-popularity
+tracks, the model tends to overpredict popularity. For high-popularity tracks,
+the model strongly underpredicts popularity: high-popularity songs have a mean
+absolute error of about 34.0, and their mean actual popularity is about 73.8
+while the model's mean prediction is about 39.8. This suggests that hit songs
+depend on external signals not present in the dataset, such as artist fame,
+playlist placement, marketing, and social media trends.
+
+## 9. Feature Importance and Interpretation
 
 Permutation importance identifies the most influential features as:
 
@@ -157,7 +179,7 @@ features, acousticness, danceability, loudness, valence, and energy are
 important. These features describe the sonic character of the song and help the
 model distinguish tracks that may be more likely to appeal to large audiences.
 
-## 9. Limitations
+## 10. Limitations
 
 First, Spotify popularity is time-dependent, but the dataset provides only a
 single snapshot. Second, the dataset does not include release date, playlist
@@ -167,11 +189,11 @@ patterns rather than purely musical properties. Finally, excluding raw artist
 and track names improves generalization, but it also removes information about
 artist fame.
 
-## 10. Conclusion
+## 11. Conclusion
 
 This project shows that Spotify track popularity can be predicted moderately
 well from audio features and metadata. The best model, HistGradientBoosting,
-outperforms the mean baseline and explains about 38% of the variance in
+outperforms the mean baseline and explains about 37% of the variance in
 popularity. The ablation study shows that audio features alone are useful, but
 genre and metadata provide major additional signal. The main takeaway is that
 track popularity is not purely an acoustic property; it also reflects genre and

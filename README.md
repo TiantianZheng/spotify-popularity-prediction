@@ -49,18 +49,23 @@ Evaluation metrics:
 The notebook compares:
 
 - Mean baseline
+- Genre mean baseline
 - Ridge Regression
 - Random Forest Regressor
 - HistGradientBoosting Regressor
+
+The train/test split is grouped by `track_id`, so the same track cannot appear
+in both training and testing sets.
 
 ## Results from the Current Notebook Run
 
 | Model | MAE | RMSE | R2 |
 |---|---:|---:|---:|
-| HistGradientBoosting | 12.914 | 17.612 | 0.382 |
-| Ridge Regression | 14.169 | 19.325 | 0.256 |
-| Random Forest | 16.451 | 20.556 | 0.158 |
-| Mean baseline | 18.984 | 22.406 | ~0.000 |
+| HistGradientBoosting | 13.030 | 17.782 | 0.369 |
+| Ridge Regression | 14.167 | 19.270 | 0.259 |
+| Genre mean baseline | 14.234 | 19.356 | 0.253 |
+| Random Forest | 16.495 | 20.589 | 0.154 |
+| Global mean baseline | 18.965 | 22.389 | ~0.000 |
 
 HistGradientBoosting performs best. It reduces RMSE by about 21% compared with
 the mean baseline.
@@ -69,9 +74,9 @@ the mean baseline.
 
 | Feature Set | MAE | RMSE | R2 |
 |---|---:|---:|---:|
-| Audio + metadata + simple engineered features | 13.041 | 17.735 | 0.374 |
-| Audio + metadata | 13.150 | 17.886 | 0.363 |
-| Audio features only | 16.150 | 19.896 | 0.211 |
+| Audio + metadata + simple engineered features | 13.134 | 17.867 | 0.363 |
+| Audio + metadata | 13.266 | 18.072 | 0.348 |
+| Audio features only | 16.633 | 20.576 | 0.155 |
 
 The ablation study shows that audio features alone provide useful signal, but
 genre and metadata substantially improve prediction.
