@@ -43,8 +43,6 @@ The notebook's exploratory analysis focuses on:
 - Audio feature distributions.
 - Audio feature correlations with popularity.
 - Correlation heatmap among audio features.
-- Explicit versus non-explicit track popularity.
-- Low, medium, and high popularity bucket profiles.
 
 The EDA motivates the model design in three ways. First, popularity is a broad
 0-100 score, so regression is appropriate. Second, genre-level differences are
@@ -75,9 +73,9 @@ optimistic performance.
 
 ## 4. Models
 
-The notebook compares four models:
+The notebook compares five models:
 
-- **Mean baseline**: predicts the average training-set popularity.
+- **Global mean baseline**: predicts the average training-set popularity.
 - **Genre mean baseline**: predicts the average training-set popularity for
   each `track_genre`.
 - **Ridge Regression**: a regularized linear model.
@@ -93,7 +91,7 @@ The main proposed model is HistGradientBoosting because gradient boosting is
 well suited for tabular prediction tasks and can capture nonlinear feature
 interactions between genre, audio features, and metadata.
 
-## 5. Literature Review Plan
+## 5. Related Work / Literature Review
 
 The literature review should connect this project to:
 

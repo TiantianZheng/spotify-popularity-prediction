@@ -1,28 +1,34 @@
 # Predicting Spotify Track Popularity
 
-This project predicts Spotify track `popularity` using audio features and
-lightweight metadata from the Kaggle dataset **Spotify Tracks Dataset | Audio
-Features**.
+This repository contains the DSC148 final project **Predicting Spotify Track
+Popularity Using Audio Features and Genre Metadata**.
 
-The full project workflow is in:
+## Project Files
 
-[spotify_popularity_prediction.ipynb](/Users/deidei/Documents/Codex/2026-06-04/files-mentioned-by-the-user-project/spotify_popularity_prediction.ipynb)
+- [Final report PDF](reports/DSC148_Final_Project.pdf)
+- [Project notebook](spotify_popularity_prediction.ipynb)
+- [Report draft / companion notes](reports/project_report_draft.md)
+- [Results summary](reports/spotify_results_summary.md)
+- [Requirements](requirements.txt)
 
 ## Research Question
 
 Can Spotify track popularity be predicted from audio characteristics and
-metadata, and which features contribute most to popularity?
+lightweight metadata, and which features contribute most to popularity?
 
 ## Dataset
 
 - Source: `saichaitanyareddyai/spotify-tracks-dataset-audio-features`
 - File: `spotify-tracks-dataset-detailed.csv`
 - Rows: 114,000 tracks
+- Original columns: 20
+- Columns after feature engineering: 23
+- Unique track IDs: 89,741
 - Genres: 114
 - Artists: 31,437 unique artists
 - Target variable: `popularity`, a score from 0 to 100
 
-The notebook excludes raw identifier and text fields:
+The notebook excludes raw identifier and high-cardinality text fields:
 
 - `track_id`
 - `artists`
@@ -30,8 +36,21 @@ The notebook excludes raw identifier and text fields:
 - `track_name`
 
 These fields are excluded because they may encourage memorization of specific
-songs or artists. This project focuses on audio features and simple metadata,
-not full text analysis.
+songs or artists. The project focuses on audio features and lightweight
+metadata rather than full text analysis.
+
+## Project Components
+
+The notebook and report are organized around the project instruction
+components:
+
+| Required component | Location |
+|---|---|
+| Dataset | Notebook Section 1; report Section 2 |
+| Predictive Task | Notebook Section 2; report Section 3 |
+| Model | Notebook Section 3; report Section 5 |
+| Literature | Notebook Section 4; report Section 4 |
+| Results | Notebook Section 5; report Section 6 |
 
 ## Predictive Task
 
@@ -44,20 +63,20 @@ Evaluation metrics:
 - RMSE
 - R2
 
+The train/test split is grouped by `track_id`, so the same track cannot appear
+in both training and testing sets.
+
 ## Models
 
 The notebook compares:
 
-- Mean baseline
+- Global mean baseline
 - Genre mean baseline
 - Ridge Regression
 - Random Forest Regressor
 - HistGradientBoosting Regressor
 
-The train/test split is grouped by `track_id`, so the same track cannot appear
-in both training and testing sets.
-
-## Results from the Current Notebook Run
+## Results
 
 | Model | MAE | RMSE | R2 |
 |---|---:|---:|---:|
@@ -68,7 +87,7 @@ in both training and testing sets.
 | Global mean baseline | 18.965 | 22.389 | ~0.000 |
 
 HistGradientBoosting performs best. It reduces RMSE by about 21% compared with
-the mean baseline.
+the global mean baseline.
 
 ## Ablation Study
 
@@ -83,19 +102,12 @@ genre and metadata substantially improve prediction.
 
 ## Key Findings
 
-The strongest predictors under permutation importance are:
-
-- `track_genre`
-- `track_name_length`
-- `acousticness`
-- `danceability`
-- `loudness`
-- `valence`
-- `energy`
-- `duration_ms`
-
-The major takeaway is that Spotify popularity cannot be explained by acoustic
-features alone. Genre and lightweight metadata capture important market context.
+- `track_genre` is the strongest feature under permutation importance.
+- Audio-only features are useful but limited.
+- Genre metadata captures important market and audience context.
+- High-popularity tracks are often underpredicted, suggesting that missing
+  external factors such as artist fame, playlists, marketing, and social trends
+  matter.
 
 ## EDA Included in the Notebook
 
@@ -107,8 +119,6 @@ The notebook includes:
 - Audio feature distributions
 - Audio feature correlations with popularity
 - Correlation heatmap among audio features
-- Explicit vs non-explicit popularity comparison
-- Low / medium / high popularity bucket profiles
 - EDA summary that motivates the model and ablation design
 
 ## How to Run
@@ -116,4 +126,5 @@ The notebook includes:
 Open `spotify_popularity_prediction.ipynb` in Cursor or Jupyter and run the
 cells from top to bottom.
 
-The notebook will recreate any figures or CSV outputs if needed.
+The notebook will recreate any ignored figure or CSV output directories if
+needed.

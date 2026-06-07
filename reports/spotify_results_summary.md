@@ -1,6 +1,7 @@
 # Spotify Popularity Prediction Results
 
 These results come from the notebook `spotify_popularity_prediction.ipynb`.
+The final ACM-style report is available at `reports/DSC148_Final_Project.pdf`.
 
 ## Dataset
 
