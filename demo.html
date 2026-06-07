@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spotify Popularity Predictor Demo</title>
+  <style>
+    :root {
+      --green: #1db954;
+      --ink: #101513;
+      --muted: #66716b;
+      --line: #dce6df;
+      --paper: #ffffff;
+      --wash: #f5f8f6;
+      --dark: #101815;
+      --red: #e76f51;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--wash);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    a { color: inherit; }
+    .wrap { width: min(1120px, calc(100% - 36px)); margin: 0 auto; }
+    header {
+      color: #fff;
+      background: linear-gradient(135deg, #07100b 0%, #111815 58%, #0e321c 100%);
+      border-bottom: 5px solid var(--green);
+      padding: 42px 0 34px;
+    }
+    .nav { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 34px; }
+    .brand { font-weight: 900; color: var(--green); letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.82rem; }
+    .nav a { color: #d7e1db; text-decoration: none; font-weight: 700; font-size: 0.92rem; }
+    h1 { margin: 0; max-width: 860px; font-size: clamp(2.25rem, 5vw, 4.3rem); line-height: 1; letter-spacing: 0; }
+    .sub { max-width: 780px; color: #cfdbd4; margin: 20px 0 0; font-size: 1.05rem; }
+    main { padding: 34px 0 54px; }
+    .demo-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 22px; align-items: start; }
+    .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: 0 14px 36px rgba(12, 24, 18, 0.06); }
+    .panel h2 { margin: 0 0 14px; font-size: 1.25rem; }
+    .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
+    label { display: block; font-weight: 800; margin-bottom: 8px; }
+    .hint { color: var(--muted); font-size: 0.85rem; font-weight: 500; }
+    input[type="range"] { width: 100%; accent-color: var(--green); }
+    input[type="number"], select {
+      width: 100%; min-height: 42px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+      background: #fff; color: var(--ink); font: inherit;
+    }
+    .value { float: right; color: var(--green); font-variant-numeric: tabular-nums; }
+    .check { display: flex; gap: 10px; align-items: center; min-height: 42px; }
+    .score-card { position: sticky; top: 18px; background: var(--dark); color: #fff; border-color: #203228; }
+    .score { font-size: 5rem; line-height: 0.95; font-weight: 950; letter-spacing: 0; color: var(--green); }
+    .score-label { color: #cbd8d0; margin: 8px 0 18px; }
+    .meter { height: 14px; border-radius: 999px; overflow: hidden; background: rgba(255,255,255,0.12); margin: 18px 0; }
+    .meter span { display: block; height: 100%; width: 0%; background: var(--green); border-radius: inherit; transition: width 180ms ease; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .pill { padding: 7px 9px; border-radius: 999px; background: rgba(29,185,84,0.14); color: #dff5e7; font-size: 0.82rem; font-weight: 800; }
+    .note { color: #cbd8d0; font-size: 0.88rem; margin: 16px 0 0; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    button, .button {
+      min-height: 42px; border: 1px solid var(--line); border-radius: 8px; padding: 9px 13px; background: #fff; color: var(--ink);
+      font: inherit; font-weight: 850; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
+    }
+    button.primary, .button.primary { background: var(--green); border-color: var(--green); color: #07100b; }
+    .model-note { margin-top: 22px; color: var(--muted); font-size: 0.92rem; }
+    footer { padding: 26px 0; color: var(--muted); background: #eaf0ed; }
+    @media (max-width: 900px) { .demo-grid, .controls { grid-template-columns: 1fr; } .score-card { position: static; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="nav">
+        <div class="brand">Spotify Popularity Demo</div>
+        <a href="index.html">Back to Project Site</a>
+      </div>
+      <h1>Try the popularity predictor</h1>
+      <p class="sub">Adjust the audio features and metadata below to get a browser-side prediction from a trained Ridge Regression model.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="demo-grid">
+      <section class="panel">
+        <h2>Track Inputs</h2>
+        <div class="controls">
+          <div>
+            <label for="track_genre">Genre</label>
+            <select id="track_genre"><option value="acoustic">acoustic</option>
+<option value="afrobeat">afrobeat</option>
+<option value="alt-rock">alt-rock</option>
+<option value="alternative">alternative</option>
+<option value="ambient">ambient</option>
+<option value="anime">anime</option>
+<option value="black-metal">black-metal</option>
+<option value="bluegrass">bluegrass</option>
+<option value="blues">blues</option>
+<option value="brazil">brazil</option>
+<option value="breakbeat">breakbeat</option>
+<option value="british">british</option>
+<option value="cantopop">cantopop</option>
+<option value="chicago-house">chicago-house</option>
+<option value="children">children</option>
+<option value="chill">chill</option>
+<option value="classical">classical</option>
+<option value="club">club</option>
+<option value="comedy">comedy</option>
+<option value="country">country</option>
+<option value="dance">dance</option>
+<option value="dancehall">dancehall</option>
+<option value="death-metal">death-metal</option>
+<option value="deep-house">deep-house</option>
+<option value="detroit-techno">detroit-techno</option>
+<option value="disco">disco</option>
+<option value="disney">disney</option>
+<option value="drum-and-bass">drum-and-bass</option>
+<option value="dub">dub</option>
+<option value="dubstep">dubstep</option>
+<option value="edm">edm</option>
+<option value="electro">electro</option>
+<option value="electronic">electronic</option>
+<option value="emo">emo</option>
+<option value="folk">folk</option>
+<option value="forro">forro</option>
+<option value="french">french</option>
+<option value="funk">funk</option>
+<option value="garage">garage</option>
+<option value="german">german</option>
+<option value="gospel">gospel</option>
+<option value="goth">goth</option>
+<option value="grindcore">grindcore</option>
+<option value="groove">groove</option>
+<option value="grunge">grunge</option>
+<option value="guitar">guitar</option>
+<option value="happy">happy</option>
+<option value="hard-rock">hard-rock</option>
+<option value="hardcore">hardcore</option>
+<option value="hardstyle">hardstyle</option>
+<option value="heavy-metal">heavy-metal</option>
+<option value="hip-hop">hip-hop</option>
+<option value="honky-tonk">honky-tonk</option>
+<option value="house">house</option>
+<option value="idm">idm</option>
+<option value="indian">indian</option>
+<option value="indie">indie</option>
+<option value="indie-pop">indie-pop</option>
+<option value="industrial">industrial</option>
+<option value="iranian">iranian</option>
+<option value="j-dance">j-dance</option>
+<option value="j-idol">j-idol</option>
+<option value="j-pop">j-pop</option>
+<option value="j-rock">j-rock</option>
+<option value="jazz">jazz</option>
+<option value="k-pop">k-pop</option>
+<option value="kids">kids</option>
+<option value="latin">latin</option>
+<option value="latino">latino</option>
+<option value="malay">malay</option>
+<option value="mandopop">mandopop</option>
+<option value="metal">metal</option>
+<option value="metalcore">metalcore</option>
+<option value="minimal-techno">minimal-techno</option>
+<option value="mpb">mpb</option>
+<option value="new-age">new-age</option>
+<option value="opera">opera</option>
+<option value="pagode">pagode</option>
+<option value="party">party</option>
+<option value="piano">piano</option>
+<option value="pop">pop</option>
+<option value="pop-film" selected>pop-film</option>
+<option value="power-pop">power-pop</option>
+<option value="progressive-house">progressive-house</option>
+<option value="psych-rock">psych-rock</option>
+<option value="punk">punk</option>
+<option value="punk-rock">punk-rock</option>
+<option value="r-n-b">r-n-b</option>
+<option value="reggae">reggae</option>
+<option value="reggaeton">reggaeton</option>
+<option value="rock">rock</option>
+<option value="rock-n-roll">rock-n-roll</option>
+<option value="rockabilly">rockabilly</option>
+<option value="romance">romance</option>
+<option value="sad">sad</option>
+<option value="salsa">salsa</option>
+<option value="samba">samba</option>
+<option value="sertanejo">sertanejo</option>
+<option value="show-tunes">show-tunes</option>
+<option value="singer-songwriter">singer-songwriter</option>
+<option value="ska">ska</option>
+<option value="sleep">sleep</option>
+<option value="songwriter">songwriter</option>
+<option value="soul">soul</option>
+<option value="spanish">spanish</option>
+<option value="study">study</option>
+<option value="swedish">swedish</option>
+<option value="synth-pop">synth-pop</option>
+<option value="tango">tango</option>
+<option value="techno">techno</option>
+<option value="trance">trance</option>
+<option value="trip-hop">trip-hop</option>
+<option value="turkish">turkish</option>
+<option value="world-music">world-music</option></select>
+          </div>
+          <div>
+            <label for="duration_minutes">Duration <span class="value" id="duration_minutes_value"></span></label>
+            <input id="duration_minutes" type="range" min="1" max="8" step="0.1" value="3.4">
+            <div class="hint">minutes</div>
+          </div>
+          <div><label for="danceability">Danceability <span class="value" id="danceability_value"></span></label><input id="danceability" type="range" min="0" max="1" step="0.01" value="0.60"></div>
+          <div><label for="energy">Energy <span class="value" id="energy_value"></span></label><input id="energy" type="range" min="0" max="1" step="0.01" value="0.65"></div>
+          <div><label for="acousticness">Acousticness <span class="value" id="acousticness_value"></span></label><input id="acousticness" type="range" min="0" max="1" step="0.01" value="0.25"></div>
+          <div><label for="instrumentalness">Instrumentalness <span class="value" id="instrumentalness_value"></span></label><input id="instrumentalness" type="range" min="0" max="1" step="0.01" value="0.02"></div>
+          <div><label for="valence">Valence <span class="value" id="valence_value"></span></label><input id="valence" type="range" min="0" max="1" step="0.01" value="0.50"></div>
+          <div><label for="speechiness">Speechiness <span class="value" id="speechiness_value"></span></label><input id="speechiness" type="range" min="0" max="1" step="0.01" value="0.07"></div>
+          <div><label for="liveness">Liveness <span class="value" id="liveness_value"></span></label><input id="liveness" type="range" min="0" max="1" step="0.01" value="0.18"></div>
+          <div><label for="loudness">Loudness <span class="value" id="loudness_value"></span></label><input id="loudness" type="range" min="-35" max="2" step="0.1" value="-8.0"><div class="hint">dB</div></div>
+          <div><label for="tempo">Tempo <span class="value" id="tempo_value"></span></label><input id="tempo" type="range" min="50" max="220" step="1" value="120"><div class="hint">BPM</div></div>
+          <div><label for="key">Key</label><input id="key" type="number" min="0" max="11" step="1" value="5"><div class="hint">0-11 Spotify pitch class</div></div>
+          <div><label for="mode">Mode</label><select id="mode"><option value="1" selected>Major</option><option value="0">Minor</option></select></div>
+          <div><label for="time_signature">Time Signature</label><input id="time_signature" type="number" min="3" max="7" step="1" value="4"></div>
+          <div><label for="artist_count">Artist Count</label><input id="artist_count" type="number" min="1" max="10" step="1" value="1"></div>
+          <div><label for="track_name_length">Track Name Length</label><input id="track_name_length" type="number" min="1" max="120" step="1" value="16"></div>
+          <div class="check"><input id="explicit" type="checkbox"><label for="explicit" style="margin:0">Explicit track</label></div>
+        </div>
+        <div class="buttons">
+          <button class="primary" id="preset-pop">Pop-like preset</button>
+          <button id="preset-acoustic">Acoustic preset</button>
+          <button id="preset-electronic">Electronic preset</button>
+        </div>
+        <p class="model-note">This demo uses a compact Ridge model exported from the notebook. The final report's best model is HistGradientBoosting, but Ridge is used here because it can run fully in a static browser page.</p>
+      </section>
+
+      <aside class="panel score-card">
+        <h2>Predicted Popularity</h2>
+        <div class="score" id="score">--</div>
+        <div class="score-label">Spotify popularity score, clipped to 0-100</div>
+        <div class="meter"><span id="meter-fill"></span></div>
+        <div id="interpretation" class="note"></div>
+        <div class="pill-row">
+          <span class="pill">Ridge demo RMSE: 19.27</span>
+          <span class="pill">Grouped split</span>
+          <span class="pill">No backend</span>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">Tiantian Zheng and Ziling Xu | DSC148 | UC San Diego</div>
+  </footer>
+
+  <script>
+    const MODEL = {"intercept": 33.25628267541523, "numericFeatures": ["danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo", "time_signature", "duration_ms", "explicit", "track_name_length", "artist_count", "duration_minutes"], "numericCoefficients": {"danceability": 0.9171936427257904, "energy": -1.0042389310986668, "key": -0.14758587779104426, "loudness": 0.4530073468936417, "mode": -0.4720732396744936, "speechiness": -0.44050397241132155, "acousticness": -0.5770528210072834, "instrumentalness": -0.33117313196746745, "liveness": -0.14667880274473716, "valence": -1.3359497073669357, "tempo": 0.2178035406366323, "time_signature": 0.32185724674539895, "duration_ms": 0.02165439302765705, "explicit": 0.6617455428491693, "track_name_length": -0.823977286168111, "artist_count": 0.26571692038818345, "duration_minutes": 0.021654393053676495}, "numericMedians": {"danceability": 0.58, "energy": 0.684, "key": 5.0, "loudness": -7.01, "mode": 1.0, "speechiness": 0.0489, "acousticness": 0.17, "instrumentalness": 4.16e-05, "liveness": 0.132, "valence": 0.464, "tempo": 122.015, "time_signature": 4.0, "duration_ms": 212800.0, "explicit": 0.0, "track_name_length": 15.0, "artist_count": 1.0, "duration_minutes": 3.546666666666667}, "numericMeans": {"danceability": 0.5670716028524411, "energy": 0.6407588399956117, "key": 5.325737794843664, "loudness": -8.269183335161822, "mode": 0.6354031815688426, "speechiness": 0.08471201426220516, "acousticness": 0.3156785827130005, "instrumentalness": 0.15632235812572684, "liveness": 0.21424110488206255, "valence": 0.4741807463521668, "tempo": 122.07880489303346, "time_signature": 3.904541963795941, "duration_ms": 228313.7446297312, "explicit": 0.0844322545255074, "track_name_length": 17.989259462424574, "artist_count": 1.390279758639605, "duration_minutes": 3.8052290771621866}, "numericScales": {"danceability": 0.173667534024278, "energy": 0.25153463467493536, "key": 3.5579175020712146, "loudness": 5.0343614019511636, "mode": 0.4813169209793429, "speechiness": 0.10622541917918489, "acousticness": 0.33274122300178727, "instrumentalness": 0.30966026913207, "liveness": 0.19096158485144207, "valence": 0.25928686078872476, "tempo": 29.988683066867523, "time_signature": 0.4311820188428938, "duration_ms": 110169.0943403417, "explicit": 0.27803497787373327, "track_name_length": 13.138824348707743, "artist_count": 0.8714663015365026, "duration_minutes": 1.8361515723390285}, "genreCoefficients": {"acoustic": 8.4954232288423, "afrobeat": -8.245252506356886, "alt-rock": 0.4810050249671243, "alternative": -10.092896010762997, "ambient": 10.906170396865626, "anime": 15.401933316654242, "black-metal": -10.080346185647503, "bluegrass": -6.1712134726653884, "blues": -1.5423943293788998, "brazil": 11.369214911697762, "breakbeat": -13.299808811891715, "british": 10.736037581900293, "cantopop": 0.7188125754432666, "chicago-house": -20.98590783080141, "children": 2.9427708624521327, "chill": 19.171931569723206, "classical": -16.77066371928895, "club": -0.3613540153787423, "comedy": -5.325139792992882, "country": -16.702859813250633, "dance": -12.49927234472049, "dancehall": -0.9010996145563988, "death-metal": -0.9303232542512141, "deep-house": 9.747352941519518, "detroit-techno": -22.51953980914368, "disco": 1.6960466253063282, "disney": -4.436413767518067, "drum-and-bass": -7.342559880066935, "dub": 5.699309147793826, "dubstep": 7.631836756530482, "edm": 0.7025221450992635, "electro": 1.4026570534163516, "electronic": 9.182053390776648, "emo": 13.185059165843334, "folk": 5.051601118377225, "forro": 9.810787017445584, "french": 7.349714823941417, "funk": -1.83244068063841, "garage": 7.660519619964353, "german": -6.50155272472829, "gospel": 7.963903962296466, "goth": -4.237212996575752, "grindcore": -17.2128927620922, "groove": 3.4987060210034655, "grunge": 16.051043920439987, "guitar": -3.211790620333461, "happy": -11.46236502143297, "hard-rock": 10.297131052600669, "hardcore": 2.806776771461253, "hardstyle": -7.134167277509708, "heavy-metal": -6.801725108387834, "hip-hop": 3.885108750913761, "honky-tonk": -15.25653735063457, "house": -0.7493610743502939, "idm": -17.80529963907389, "indian": 15.84384494589226, "indie": 4.665086697878171, "indie-pop": 6.3730138704720485, "industrial": -2.736223806167898, "iranian": -30.652808100925675, "j-dance": -7.335018389539443, "j-idol": -7.874882943832815, "j-pop": 7.892657905671406, "j-rock": 7.867034330799046, "jazz": -18.379969529896208, "k-pop": 23.54141441300874, "kids": -18.10424727784356, "latin": -25.019204181143827, "latino": -8.462044960550742, "malay": -3.4428697059907463, "mandopop": 10.32295931136826, "metal": 10.018842144908179, "metalcore": 9.300496143204851, "minimal-techno": -0.9017641711130028, "mpb": 8.283690431631163, "new-age": -3.5636426703346675, "opera": -7.351289133503454, "pagode": 13.482127364811582, "party": -11.280113526005037, "piano": 12.648154383445796, "pop": 13.856273863790904, "pop-film": 25.899329923196166, "power-pop": -5.376043004588207, "progressive-house": 12.154413920129018, "psych-rock": 10.046867737376072, "punk": 5.774089381312064, "punk-rock": 5.8261535166940925, "r-n-b": 4.551380042926837, "reggae": -13.074170392995361, "reggaeton": -10.594095278593937, "rock": -13.960292122106763, "rock-n-roll": 2.6805900048724784, "rockabilly": -0.030503136797570763, "romance": -29.612891490956034, "sad": 16.974979128344405, "salsa": -3.442621983939092, "samba": 7.806009708848604, "sertanejo": 16.23939234018722, "show-tunes": -1.2823324525411037, "singer-songwriter": 4.000958391067981, "ska": 3.1830539498395716, "sleep": 4.69202909729219, "songwriter": 4.000958391067925, "soul": -13.20413310630872, "spanish": 5.231554893594359, "study": -8.008874168848969, "swedish": 3.6939984540542694, "synth-pop": 3.5071523384319043, "tango": -12.375275695200356, "techno": 4.4894355904560435, "trance": 3.3679693508784574, "trip-hop": 0.54584419690106, "turkish": 5.971503256059471, "world-music": 7.899012433335201}, "genres": ["acoustic", "afrobeat", "alt-rock", "alternative", "ambient", "anime", "black-metal", "bluegrass", "blues", "brazil", "breakbeat", "british", "cantopop", "chicago-house", "children", "chill", "classical", "club", "comedy", "country", "dance", "dancehall", "death-metal", "deep-house", "detroit-techno", "disco", "disney", "drum-and-bass", "dub", "dubstep", "edm", "electro", "electronic", "emo", "folk", "forro", "french", "funk", "garage", "german", "gospel", "goth", "grindcore", "groove", "grunge", "guitar", "happy", "hard-rock", "hardcore", "hardstyle", "heavy-metal", "hip-hop", "honky-tonk", "house", "idm", "indian", "indie", "indie-pop", "industrial", "iranian", "j-dance", "j-idol", "j-pop", "j-rock", "jazz", "k-pop", "kids", "latin", "latino", "malay", "mandopop", "metal", "metalcore", "minimal-techno", "mpb", "new-age", "opera", "pagode", "party", "piano", "pop", "pop-film", "power-pop", "progressive-house", "psych-rock", "punk", "punk-rock", "r-n-b", "reggae", "reggaeton", "rock", "rock-n-roll", "rockabilly", "romance", "sad", "salsa", "samba", "sertanejo", "show-tunes", "singer-songwriter", "ska", "sleep", "songwriter", "soul", "spanish", "study", "swedish", "synth-pop", "tango", "techno", "trance", "trip-hop", "turkish", "world-music"], "defaultGenre": "pop-film", "metrics": {"MAE": 14.167059869208718, "RMSE": 19.2700746905833, "R2": 0.2591791738395277}, "topGenres": ["pop-film", "k-pop", "chill", "sad", "grunge", "indian", "anime", "emo", "sertanejo", "pop", "progressive-house", "piano"]};
+    const inputIds = [
+      "track_genre", "duration_minutes", "danceability", "energy", "acousticness", "instrumentalness",
+      "valence", "speechiness", "liveness", "loudness", "tempo", "key", "mode", "time_signature",
+      "artist_count", "track_name_length", "explicit"
+    ];
+
+    function numberValue(id) {
+      const el = document.getElementById(id);
+      if (el.type === "checkbox") return el.checked ? 1 : 0;
+      return Number(el.value);
+    }
+
+    function featureVector() {
+      const durationMinutes = numberValue("duration_minutes");
+      return {
+        danceability: numberValue("danceability"),
+        energy: numberValue("energy"),
+        key: numberValue("key"),
+        loudness: numberValue("loudness"),
+        mode: numberValue("mode"),
+        speechiness: numberValue("speechiness"),
+        acousticness: numberValue("acousticness"),
+        instrumentalness: numberValue("instrumentalness"),
+        liveness: numberValue("liveness"),
+        valence: numberValue("valence"),
+        tempo: numberValue("tempo"),
+        time_signature: numberValue("time_signature"),
+        duration_ms: durationMinutes * 60000,
+        duration_minutes: durationMinutes,
+        explicit: numberValue("explicit"),
+        artist_count: numberValue("artist_count"),
+        track_name_length: numberValue("track_name_length"),
+        track_genre: document.getElementById("track_genre").value
+      };
+    }
+
+    function predict() {
+      const x = featureVector();
+      let y = MODEL.intercept;
+      for (const feature of MODEL.numericFeatures) {
+        const raw = Number.isFinite(x[feature]) ? x[feature] : MODEL.numericMedians[feature];
+        const scaled = (raw - MODEL.numericMeans[feature]) / MODEL.numericScales[feature];
+        y += MODEL.numericCoefficients[feature] * scaled;
+      }
+      y += MODEL.genreCoefficients[x.track_genre] || 0;
+      y = Math.max(0, Math.min(100, y));
+      return y;
+    }
+
+    function updateLabels() {
+      for (const id of inputIds) {
+        const valueEl = document.getElementById(`${id}_value`);
+        if (!valueEl) continue;
+        const value = numberValue(id);
+        valueEl.textContent = id === "duration_minutes" ? `${value.toFixed(1)} min` : value.toFixed(id === "tempo" ? 0 : 2);
+      }
+    }
+
+    function render() {
+      updateLabels();
+      const score = predict();
+      document.getElementById("score").textContent = score.toFixed(1);
+      document.getElementById("meter-fill").style.width = `${score}%`;
+      let text = "Low-to-medium predicted popularity.";
+      if (score >= 65) text = "High predicted popularity for this feature mix.";
+      else if (score >= 40) text = "Moderate predicted popularity.";
+      document.getElementById("interpretation").textContent = text;
+    }
+
+    function setValues(values) {
+      for (const [id, value] of Object.entries(values)) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.type === "checkbox") el.checked = Boolean(value);
+        else el.value = value;
+      }
+      render();
+    }
+
+    document.getElementById("preset-pop").addEventListener("click", () => setValues({
+      track_genre: "pop-film", danceability: 0.72, energy: 0.72, acousticness: 0.12, instrumentalness: 0.01,
+      valence: 0.66, speechiness: 0.06, liveness: 0.12, loudness: -5.5, tempo: 122, duration_minutes: 3.3,
+      key: 5, mode: 1, time_signature: 4, artist_count: 1, track_name_length: 18, explicit: false
+    }));
+    document.getElementById("preset-acoustic").addEventListener("click", () => setValues({
+      track_genre: "acoustic", danceability: 0.48, energy: 0.32, acousticness: 0.82, instrumentalness: 0.02,
+      valence: 0.42, speechiness: 0.05, liveness: 0.16, loudness: -13.5, tempo: 92, duration_minutes: 3.6,
+      key: 2, mode: 1, time_signature: 4, artist_count: 1, track_name_length: 14, explicit: false
+    }));
+    document.getElementById("preset-electronic").addEventListener("click", () => setValues({
+      track_genre: "edm", danceability: 0.78, energy: 0.88, acousticness: 0.03, instrumentalness: 0.28,
+      valence: 0.58, speechiness: 0.08, liveness: 0.20, loudness: -4.2, tempo: 128, duration_minutes: 4.1,
+      key: 7, mode: 0, time_signature: 4, artist_count: 2, track_name_length: 20, explicit: false
+    }));
+
+    for (const id of inputIds) {
+      document.getElementById(id).addEventListener("input", render);
+      document.getElementById(id).addEventListener("change", render);
+    }
+    render();
+  </script>
+</body>
+</html>

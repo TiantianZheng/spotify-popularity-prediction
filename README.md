@@ -6,6 +6,7 @@ Features and Genre Metadata**.
 ## Links
 
 - [GitHub Pages project site](https://tiantianzheng.github.io/spotify-popularity-prediction/)
+- [Interactive predictor demo](https://tiantianzheng.github.io/spotify-popularity-prediction/demo.html)
 - [Final report PDF](DSC148_Final_Project.pdf)
 - [Project notebook](spotify_popularity_prediction.ipynb)
 
@@ -42,6 +43,9 @@ Models compared:
 - Random Forest Regressor
 - HistGradientBoosting Regressor
 
+The GitHub Pages demo uses an exported Ridge Regression model because it can run
+fully in the browser without a backend.
+
 ## Results
 
 | Model | MAE | RMSE | R2 |
@@ -70,6 +74,7 @@ the global mean baseline.
 .
 ├── DSC148_Final_Project.pdf
 ├── README.md
+├── demo.html
 ├── index.html
 ├── requirements.txt
 └── spotify_popularity_prediction.ipynb
