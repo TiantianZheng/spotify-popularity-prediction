@@ -8,13 +8,13 @@
     :root {
       --green: #1db954;
       --green-dark: #10843b;
-      --ink: #111613;
-      --muted: #66716b;
-      --paper: #ffffff;
-      --wash: #f5f8f6;
-      --line: #dde6e0;
-      --charcoal: #111815;
-      --soft: #eaf3ed;
+      --ink: #f5f5f5;
+      --muted: #b3b3b3;
+      --paper: #181818;
+      --wash: #0b0b0b;
+      --line: #2a2a2a;
+      --charcoal: #ffffff;
+      --soft: rgba(29, 185, 84, 0.16);
     }
 
     * {
@@ -28,7 +28,9 @@
     body {
       margin: 0;
       color: var(--ink);
-      background: var(--wash);
+      background:
+        radial-gradient(circle at 90% 0%, rgba(29, 185, 84, 0.16), transparent 32%),
+        var(--wash);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.55;
     }
@@ -47,9 +49,9 @@
       overflow: hidden;
       color: #ffffff;
       background:
-        radial-gradient(circle at 80% 18%, rgba(29, 185, 84, 0.34), transparent 30%),
-        linear-gradient(135deg, #07100b 0%, #111815 48%, #0e2a19 100%);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        radial-gradient(circle at 80% 18%, rgba(29, 185, 84, 0.36), transparent 30%),
+        linear-gradient(135deg, #050505 0%, #121212 50%, #062511 100%);
+      border-bottom: 1px solid #243127;
     }
 
     .hero-inner {
@@ -250,7 +252,7 @@
       border: 1px solid var(--line);
       border-radius: 12px;
       background: var(--paper);
-      box-shadow: 0 12px 30px rgba(13, 26, 18, 0.05);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
     }
 
     .metric strong {
@@ -279,6 +281,7 @@
       border: 1px solid var(--line);
       border-radius: 12px;
       background: var(--paper);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.2);
     }
 
     .panel h3 {
@@ -296,7 +299,7 @@
     .pill {
       padding: 8px 10px;
       border-radius: 999px;
-      color: #183224;
+      color: #dff5e7;
       background: var(--soft);
       font-size: 0.88rem;
       font-weight: 700;
@@ -311,7 +314,7 @@
       border-radius: 12px;
       background: var(--paper);
       font-size: 0.95rem;
-      box-shadow: 0 12px 30px rgba(13, 26, 18, 0.05);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
     }
 
     th,
@@ -322,8 +325,8 @@
     }
 
     th {
-      color: #334139;
-      background: #edf5ef;
+      color: #d7e1db;
+      background: #1f2a23;
       font-size: 0.78rem;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -335,7 +338,7 @@
     }
 
     tbody tr:first-child td {
-      background: #f7fff9;
+      background: rgba(29, 185, 84, 0.1);
       font-weight: 800;
     }
 
@@ -348,7 +351,7 @@
       padding: 18px 20px;
       border-left: 5px solid var(--green);
       border-radius: 10px;
-      background: #edf8f0;
+      background: rgba(29, 185, 84, 0.1);
     }
 
     .findings {
@@ -363,6 +366,7 @@
       border: 1px solid var(--line);
       border-radius: 12px;
       background: var(--paper);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
     }
 
     .finding strong {
@@ -373,13 +377,15 @@
     footer {
       padding: 32px 20px;
       color: var(--muted);
-      background: #eaf0ed;
+      background: #121212;
+      border-top: 1px solid var(--line);
     }
 
     code {
       padding: 2px 5px;
       border-radius: 5px;
-      background: #e8eee9;
+      color: #dff5e7;
+      background: rgba(29, 185, 84, 0.14);
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 0.92em;
     }
