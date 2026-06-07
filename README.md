@@ -5,7 +5,7 @@ Popularity Using Audio Features and Genre Metadata**.
 
 ## Project Files
 
-- [Final report PDF](reports/DSC148_Final_Project.pdf)
+- [Final report PDF](DSC148_Final_Project.pdf)
 - [Project notebook](spotify_popularity_prediction.ipynb)
 - [Report draft / companion notes](reports/project_report_draft.md)
 - [Results summary](reports/spotify_results_summary.md)
